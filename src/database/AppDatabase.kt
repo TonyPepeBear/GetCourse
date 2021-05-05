@@ -67,6 +67,13 @@ object AppDatabase {
         println(e.message)
         listOf()
     }
+
+    /**
+     *  回傳已選此課人數
+     */
+    fun getCourseStudentCount(courseID: Int) = transaction {
+        PickedList.select { PickedList.courseID eq courseID }.count().toInt()
+    }
 }
 
 fun toClassName(dep: String, grade: Int, cls: Int): String {
