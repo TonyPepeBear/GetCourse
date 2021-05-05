@@ -10,6 +10,9 @@ import org.jetbrains.exposed.sql.ResultRow
 
 const val bootstrapCdn = "https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
 
+/**
+ * 課程表格
+ */
 @HtmlTagMarker
 fun FlowContent.courseGrid(courses: List<ResultRow>) {
     div(classes = "row") {
@@ -48,7 +51,9 @@ fun HTML.respond404(message: String = "") {
     }
 }
 
-
+/**
+ * 未登入的 HTML
+ */
 fun HTML.notLoginHtml() {
     head {
         title = "Course"
@@ -75,7 +80,9 @@ fun HTML.notLoginHtml() {
     }
 }
 
-@Suppress("DuplicatedCode")
+/**
+ * 已登入的 HTML
+ */
 fun HTML.loginHTML(stuID: String, row: ResultRow) {
     head {
         title = "Course"
