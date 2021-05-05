@@ -68,6 +68,18 @@ VALUES (1310, 3, 9);
 
 
 
+CREATE TABLE IF NOT EXISTS pickedList
+(
+    pickedID INT PRIMARY KEY AUTO_INCREMENT,
+    stuID    varchar(8) NOT NULL,
+    courseID INT        NOT NULL,
+
+    FOREIGN KEY (stuID) REFERENCES students (stuID),
+    FOREIGN KEY (courseID) REFERENCES courses (courseID)
+);
+
+
+
 CREATE TABLE IF NOT EXISTS watchList
 (
     watchID  INT PRIMARY KEY AUTO_INCREMENT,
