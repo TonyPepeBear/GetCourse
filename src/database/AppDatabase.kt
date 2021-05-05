@@ -1,10 +1,7 @@
 package com.tonypepe.database
 
 import com.tonypepe.MYSQL_PW
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object AppDatabase {
@@ -21,6 +18,15 @@ object AppDatabase {
         transaction {
             val row = Students.select { Students.stuID eq stuId }
             if (row.empty()) null else row.first()
+        }
+    } catch (e: Exception) {
+        println(e.message)
+        null
+    }
+
+    fun getCourse(courseID: Int) = try {
+        transaction {
+            Courses.select { Courses.courseID eq courseID }.first()
         }
     } catch (e: Exception) {
         println(e.message)
@@ -46,8 +52,16 @@ object AppDatabase {
                         (Courses.courseDep eq dep) and
                         (Courses.courseGrade eq grade) and
                         (Courses.courseClass eq cls)
-            }
-                .toList()
+            }.toList()
+        }
+    } catch (e: Exception) {
+        println(e.message)
+        listOf()
+    }
+
+    fun getPickedList(stuId: String): List<ResultRow> = try {
+        transaction {
+            PickedList.select { PickedList.stuID eq stuId }.toList()
         }
     } catch (e: Exception) {
         println(e.message)

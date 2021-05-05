@@ -1,12 +1,9 @@
 package com.tonypepe
 
-import com.tonypepe.database.AppDatabase
-import com.tonypepe.database.Courses
-import com.tonypepe.database.Students
-import com.tonypepe.database.toClassName
+import com.tonypepe.database.*
 import kotlinx.html.*
 import org.jetbrains.exposed.sql.ResultRow
-
+import org.jetbrains.exposed.sql.transactions.transaction
 
 const val bootstrapCdn = "https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
 
@@ -31,7 +28,7 @@ fun FlowContent.courseGrid(courses: List<ResultRow>) {
 
 @HtmlTagMarker
 fun FlowContent.urlButton(title: String, url: String) {
-    input(type = InputType.button, classes = "btn btn-primary") {
+    input(type = InputType.button, classes = "btn btn-primary m-2") {
         attributes["value"] = title
         attributes["onclick"] = "self.location.href='$url'"
     }
@@ -61,12 +58,11 @@ fun HTML.notLoginHtml() {
     }
     body {
         div(classes = "container") {
-            form(action = "/", method = FormMethod.post) {
-                p {
-                    +"id"
-                    input(type = InputType.text, name = Students.stuID.name)
-                }
-                button(type = ButtonType.submit, classes = "btn btn-primary") { +"送出" }
+            h1 { +"選課系統" }
+            form(classes = "form-inline", action = "/", method = FormMethod.post) {
+                p(classes = "p-1") { +"輸入學號登入" }
+                input(classes = "p-1", type = InputType.text, name = Students.stuID.name)
+                button(type = ButtonType.submit, classes = "btn btn-primary p-1") { +"送出" }
             }
             ul {
                 AppDatabase.getAllStudentID().forEach {
@@ -95,13 +91,35 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
                 +"${row[Students.stuID]}   ${
                     toClassName(
                         row[Students.dep],
-                        row[Students.grade], row[Students.cls]
+                        row[Students.grade],
+                        row[Students.cls]
                     )
                 }"
             }
-            urlButton("登出", "logout")
-            h2 { +"必修" }
+            div(classes = "row") {
+                urlButton("登出", "logout")
+                urlButton("課程列表", "/course-list")
+            }
+            h2 { +"必修課表" }
             courseGrid(AppDatabase.getCompulsoryCourses(stuID))
+            h2 { +"已選課表" }
+            courseGrid(AppDatabase.getPickedList(stuID).map {
+                transaction { AppDatabase.getCourse(it[PickedList.courseID])!! }
+            })
+        }
+    }
+}
+
+fun HTML.courseListHTML() {
+    head {
+        title = "課程列表"
+        styleLink(bootstrapCdn)
+    }
+    body {
+        div(classes = "container") {
+            h1 { +"課程列表" }
+            urlButton("返回主頁面", "/")
+            courseGrid(AppDatabase.getAllCourse())
         }
     }
 }

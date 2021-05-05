@@ -84,16 +84,7 @@ fun Route.routeRoot() {
 fun Route.routeCourseList() {
     get("/course-list") {
         call.respondHtml {
-            head {
-                title = "Course List"
-                styleLink(bootstrapCdn)
-            }
-            body {
-                div(classes = "container") {
-                    h1 { +"Course List" }
-                    courseGrid(AppDatabase.getAllCourse())
-                }
-            }
+            courseListHTML()
         }
     }
 }

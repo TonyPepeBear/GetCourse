@@ -78,6 +78,9 @@ CREATE TABLE IF NOT EXISTS pickedList
     FOREIGN KEY (courseID) REFERENCES courses (courseID)
 );
 
+INSERT INTO pickedList(stuID, courseID)
+VALUES ('D2345678', 1311);
+
 
 
 CREATE TABLE IF NOT EXISTS watchList
