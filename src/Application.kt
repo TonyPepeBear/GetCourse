@@ -2,6 +2,7 @@ package com.tonypepe
 
 import com.fasterxml.jackson.databind.*
 import com.tonypepe.database.AppDatabase
+import com.tonypepe.database.PickedList
 import com.tonypepe.database.Students
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -89,13 +90,31 @@ fun Route.routeCourseList() {
     }
 
     get("/courses/{id}") {
-        val id = call.parameters["id"]?.toIntOrNull()
-        if (id == null) call.respondHtml {
-            respond404("Course Not Found")
+        val sID = call.sessions.get<LoginSession>()?.stuID
+        val cID = call.parameters["id"]?.toIntOrNull()
+        if (sID == null || cID == null) {
+            call.respondHtml { respond404("Course Not Found") }
         } else {
             call.respondHtml {
-                courseDetail(id)
+                courseDetail(sID, cID)
             }
         }
+    }
+
+    post("/courses/{id}") {
+        val courseID = call.parameters["id"]?.toIntOrNull()
+        val stuID = call.sessions.get<LoginSession>()?.stuID
+        if (courseID == null || stuID == null) {
+            call.respondHtml { respond404() }
+        } else {
+            val course = AppDatabase.getPickedList(stuID)
+                .filter { it[PickedList.courseID] == courseID }
+            if (course.count() > 0) {
+                AppDatabase.withdrawCourse(stuID, courseID)
+            } else {
+                AppDatabase.pickCourse(stuID, courseID)
+            }
+        }
+        call.respondRedirect("/")
     }
 }

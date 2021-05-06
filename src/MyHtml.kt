@@ -13,19 +13,22 @@ const val bootstrapCdn = "https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/
 @HtmlTagMarker
 fun FlowContent.courseGrid(courses: List<ResultRow>) {
     div(classes = "row") {
-        div(classes = "col-2 border p-1") { +"課程代號" }
+        div(classes = "col-1 border p-1") { +"課程代號" }
         div(classes = "col-2 border p-1") { +"課程名稱" }
-        div(classes = "col-2 border p-1") { +"課程學分" }
-        div(classes = "col-2 border p-1") { +"人數" }
-        div(classes = "col-2 border p-1") { +"授課教師" }
+        div(classes = "col-1 border p-1") { +"課程學分" }
+        div(classes = "col-1 border p-1") { +"人數" }
+        div(classes = "col-1 border p-1") { +"授課教師" }
     }
     courses.forEach {
         div(classes = "row") {
-            div(classes = "col-2 border") { +it[Courses.courseID].toString() }
+            div(classes = "col-1 border") {
+                val courseID = it[Courses.courseID].toString()
+                a("/courses/$courseID") { +courseID }
+            }
             div(classes = "col-2 border") { +it[Courses.courseName] }
-            div(classes = "col-2 border") { +it[Courses.coursePoint].toString() }
-            div(classes = "col-2 border") { +"${AppDatabase.getCourseStudentCount(it[Courses.courseID])} / ${it[Courses.studentCount]}" }
-            div(classes = "col-2 border") { +it[Teachers.teacherName].toString() }
+            div(classes = "col-1 border") { +it[Courses.coursePoint].toString() }
+            div(classes = "col-1 border") { +"${AppDatabase.getCourseStudentCount(it[Courses.courseID])} / ${it[Courses.studentCount]}" }
+            div(classes = "col-1 border") { +it[Teachers.teacherName].toString() }
         }
     }
 }
@@ -129,8 +132,8 @@ fun HTML.courseListHTML() {
     }
 }
 
-fun HTML.courseDetail(id: Int) {
-    val course = AppDatabase.getCourse(id)
+fun HTML.courseDetail(sID: String, cID: Int) {
+    val course = AppDatabase.getCourse(cID)
     if (course == null) {
         respond404("Course Not Found")
     } else {
@@ -141,6 +144,14 @@ fun HTML.courseDetail(id: Int) {
         body {
             div(classes = "container") {
                 h1 { +"${course[Courses.courseID]}  ${course[Courses.courseName]}" }
+            }
+            form(action = "/courses/$cID", method = FormMethod.post) {
+                val text = if (
+                    AppDatabase.getPickedList(sID).filter { it[PickedList.courseID] == cID }
+                        .count() > 0
+                )
+                    "退選" else "加選"
+                button(type = ButtonType.submit, classes = "btn btn-primary m-2") { +text }
             }
         }
     }

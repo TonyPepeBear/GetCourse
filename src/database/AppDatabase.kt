@@ -74,6 +74,29 @@ object AppDatabase {
     fun getCourseStudentCount(courseID: Int) = transaction {
         PickedList.select { PickedList.courseID eq courseID }.count().toInt()
     }
+
+    /**
+     * 選課
+     */
+    fun pickCourse(sID: String, cID: Int) {
+        transaction {
+            PickedList.insert {
+                it[stuID] = sID
+                it[courseID] = cID
+            }
+        }
+    }
+
+    /**
+     * 退選
+     */
+    fun withdrawCourse(sID: String, cID: Int) {
+        transaction {
+            PickedList.deleteWhere {
+                (PickedList.stuID eq sID) or (PickedList.courseID eq cID)
+            }
+        }
+    }
 }
 
 fun toClassName(dep: String, grade: Int, cls: Int): String {
