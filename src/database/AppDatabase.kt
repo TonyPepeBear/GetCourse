@@ -93,7 +93,7 @@ object AppDatabase {
     fun withdrawCourse(sID: String, cID: Int) {
         transaction {
             PickedList.deleteWhere {
-                (PickedList.stuID eq sID) or (PickedList.courseID eq cID)
+                (PickedList.stuID eq sID) and (PickedList.courseID eq cID)
             }
         }
     }
