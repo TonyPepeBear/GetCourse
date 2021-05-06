@@ -82,9 +82,20 @@ fun Route.routeRoot() {
 }
 
 fun Route.routeCourseList() {
-    get("/course-list") {
+    get("/courses") {
         call.respondHtml {
             courseListHTML()
+        }
+    }
+
+    get("/courses/{id}") {
+        val id = call.parameters["id"]?.toIntOrNull()
+        if (id == null) call.respondHtml {
+            respond404("Course Not Found")
+        } else {
+            call.respondHtml {
+                courseDetail(id)
+            }
         }
     }
 }

@@ -74,7 +74,7 @@ fun HTML.notLoginHtml() {
                     }
                 }
             }
-            urlButton("課程列表", "/course-list")
+            urlButton("課程列表", "/courses")
         }
     }
 }
@@ -101,7 +101,7 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
             }
             div(classes = "row") {
                 urlButton("登出", "logout")
-                urlButton("課程列表", "/course-list")
+                urlButton("課程列表", "/courses")
             }
             h2 { +"必修課表" }
             courseGrid(AppDatabase.getCompulsoryCourses(stuID))
@@ -123,6 +123,23 @@ fun HTML.courseListHTML() {
             h1 { +"課程列表" }
             urlButton("返回主頁面", "/")
             courseGrid(AppDatabase.getAllCourse())
+        }
+    }
+}
+
+fun HTML.courseDetail(id: Int) {
+    val course = AppDatabase.getCourse(id)
+    if (course == null) {
+        respond404("Course Not Found")
+    } else {
+        head {
+            title = course[Courses.courseName]
+            styleLink(bootstrapCdn)
+        }
+        body {
+            div(classes = "container") {
+                h1 { +"${course[Courses.courseID]}  ${course[Courses.courseName]}" }
+            }
         }
     }
 }
