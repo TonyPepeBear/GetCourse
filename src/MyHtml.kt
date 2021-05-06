@@ -62,9 +62,10 @@ fun HTML.notLoginHtml() {
         div(classes = "container") {
             h1 { +"選課系統" }
             form(classes = "form-inline", action = "/", method = FormMethod.post) {
-                p(classes = "p-1") { +"輸入學號登入" }
-                input(classes = "p-1", type = InputType.text, name = Students.stuID.name)
-                button(type = ButtonType.submit, classes = "btn btn-primary p-1") { +"送出" }
+                input(classes = "m-2", type = InputType.text, name = Students.stuID.name) {
+                    placeholder = "學號"
+                }
+                button(type = ButtonType.submit, classes = "btn btn-primary m-2") { +"登入" }
             }
             ul {
                 AppDatabase.getAllStudentID().forEach {
