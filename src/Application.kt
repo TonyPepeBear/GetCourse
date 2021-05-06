@@ -42,6 +42,7 @@ fun Application.module(testing: Boolean = false) {
 
     val client = HttpClient(Apache) {}
 
+
     routing {
         routeRoot()
         routeCourseList()
