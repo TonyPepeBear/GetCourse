@@ -17,6 +17,7 @@ fun FlowContent.courseGrid(courses: List<ResultRow>) {
         div(classes = "col-2 border p-1") { +"課程名稱" }
         div(classes = "col-2 border p-1") { +"課程學分" }
         div(classes = "col-2 border p-1") { +"人數" }
+        div(classes = "col-2 border p-1") { +"授課教師" }
     }
     courses.forEach {
         div(classes = "row") {
@@ -24,6 +25,7 @@ fun FlowContent.courseGrid(courses: List<ResultRow>) {
             div(classes = "col-2 border") { +it[Courses.courseName] }
             div(classes = "col-2 border") { +it[Courses.coursePoint].toString() }
             div(classes = "col-2 border") { +"${AppDatabase.getCourseStudentCount(it[Courses.courseID])} / ${it[Courses.studentCount]}" }
+            div(classes = "col-2 border") { +it[Teachers.teacherName].toString() }
         }
     }
 }

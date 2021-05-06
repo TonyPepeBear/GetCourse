@@ -26,7 +26,7 @@ object AppDatabase {
 
     fun getCourse(courseID: Int) = try {
         transaction {
-            Courses.select { Courses.courseID eq courseID }.first()
+            (Courses innerJoin Teachers).select { Courses.courseID eq courseID }.first()
         }
     } catch (e: Exception) {
         println(e.message)
@@ -36,7 +36,7 @@ object AppDatabase {
     /**
      * 回傳所有課程
      */
-    fun getAllCourse() = transaction { Courses.selectAll().toList() }
+    fun getAllCourse() = transaction { (Courses innerJoin Teachers).selectAll().toList() }
 
     /**
      * 回傳一學生的必修課
@@ -47,7 +47,7 @@ object AppDatabase {
             val dep = stu[Students.dep]
             val grade = stu[Students.grade]
             val cls = stu[Students.cls]
-            Courses.select {
+            (Courses innerJoin Teachers).select {
                 (Courses.courseType eq 0) and
                         (Courses.courseDep eq dep) and
                         (Courses.courseGrade eq grade) and

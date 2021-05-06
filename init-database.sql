@@ -18,23 +18,41 @@ VALUES ('D3456789', '王中明', '資訊', 3, 2);
 
 
 
+CREATE TABLE IF NOT EXISTS teachers
+(
+    teacherID   VARCHAR(8) PRIMARY KEY,
+    teacherName VARCHAR(20) NOT NULL
+);
+
+INSERT INTO teachers(teacherID, teacherName)
+VALUES ('T001', '許懷中');
+
+INSERT INTO teachers(teacherID, teacherName)
+VALUES ('T002', '劉宗杰');
+
+
 CREATE TABLE IF NOT EXISTS courses
 (
     courseID     INT PRIMARY KEY,
     courseName   VARCHAR(20) NOT NULL,
+    teacherID    varchar(8)  NOT NULL,
     courseType   INT         NOT NULL, # 0: 必修, 1: 選修, 2: 通識
     coursePoint  INT         NOT NULL,
     studentCount INT         NOT NULL,
     courseDep    varchar(20) NOT NULL,
     courseGrade  INT         NOT NULL,
-    courseClass  INT         NOT NULL
+    courseClass  INT         NOT NULL,
+
+    FOREIGN KEY (teacherID) REFERENCES teachers (teacherID)
 );
 
-INSERT INTO courses(courseID, courseName, courseType, coursePoint, studentCount, courseDep, courseGrade, courseClass)
-VALUES (1311, '資料庫系統', 0, 3, 50, '資訊', 2, 3);
+INSERT INTO courses(courseID, courseName, teacherID, courseType, coursePoint, studentCount, courseDep, courseGrade,
+                    courseClass)
+VALUES (1311, '資料庫系統', 'T001', 0, 3, 50, '資訊', 2, 3);
 
-INSERT INTO courses(courseID, courseName, courseType, coursePoint, studentCount, courseDep, courseGrade, courseClass)
-VALUES (1310, '系統程式', 0, 3, 50, '資訊', 2, 3);
+INSERT INTO courses(courseID, courseName, teacherID, courseType, coursePoint, studentCount, courseDep, courseGrade,
+                    courseClass)
+VALUES (1310, '系統程式', 'T002', 0, 3, 50, '資訊', 2, 3);
 
 
 
