@@ -115,6 +115,16 @@ object AppDatabase {
             }
         }
     }
+
+    fun insertCourseTime(id: Int, date: Int, period: Int) {
+        transaction {
+            CourseTime.insert {
+                it[courseID] = id
+                it[courseDate] = date
+                it[coursePeriod] = period
+            }
+        }
+    }
 }
 
 fun toClassName(dep: String, grade: Int, cls: Int): String {
