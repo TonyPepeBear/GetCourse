@@ -39,7 +39,7 @@ fun FlowContent.courseGrid(courses: List<ResultRow>) {
                     }
                     td { +it[Courses.courseName] }
                     td { +it[Courses.coursePoint].toString() }
-                    td { +"${AppDatabase.getCourseStudentCount(it[Courses.courseID])} / ${it[Courses.studentCount]}" }
+                    td { +"${AppDatabase.getCourseStudentCount(it[Courses.cID])} / ${it[Courses.studentCount]}" }
                     td { +it[Courses.teacherName].toString() }
                 }
             }
