@@ -14,6 +14,9 @@ VALUES ('D2345678', '王大明', '資訊二丙');
 INSERT INTO students(stuID, name, class)
 VALUES ('D3456789', '王中明', '資訊三乙');
 
+INSERT INTO students(stuID, name, class)
+VALUES ('D4567890', '王巨明', '資訊一丙');
+
 
 
 CREATE TABLE IF NOT EXISTS courses
@@ -45,13 +48,13 @@ CREATE TABLE IF NOT EXISTS pickedList
 (
     pickedID INT PRIMARY KEY AUTO_INCREMENT,
     stuID    varchar(8) NOT NULL,
-    courseID INT NOT NULL
+    cID INT NOT NULL
 );
 
 
 CREATE TABLE IF NOT EXISTS watchList
 (
-    watchID  INT PRIMARY KEY AUTO_INCREMENT,
-    stuID    varchar(8) NOT NULL,
-    courseID INT NOT NULL
+    watchID INT PRIMARY KEY AUTO_INCREMENT,
+    stuID   varchar(8) NOT NULL,
+    cID     INT        NOT NULL
 );

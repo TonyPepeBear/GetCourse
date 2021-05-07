@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS watchList
 (
     watchID  INT PRIMARY KEY AUTO_INCREMENT,
     stuID    varchar(8) NOT NULL,
-    courseID INT        NOT NULL,
+    cID INT        NOT NULL,
 
     FOREIGN KEY (stuID) REFERENCES students (stuID),
     FOREIGN KEY (courseID) REFERENCES courses (courseID)
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS watchList
 object WatchList : Table("watchList") {
     val watchID = integer("watchID").autoIncrement()
     val stuID = varchar("stuID", 8) references Students.stuID
-    val courseID = integer("courseID") references Courses.courseID
+    val cID = integer("cID") references Courses.courseID
 
     override val primaryKey = PrimaryKey(watchID)
 }

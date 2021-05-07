@@ -34,8 +34,8 @@ fun FlowContent.courseGrid(courses: List<ResultRow>) {
             courses.forEach {
                 tr {
                     td {
-                        val courseID = it[Courses.courseID].toString()
-                        a("/courses/$courseID") { +courseID }
+                        val cit = it[Courses.cID].toString()
+                        a("/courses/$cit") { +it[Courses.courseID].toString() }
                     }
                     td { +it[Courses.courseName] }
                     td { +it[Courses.coursePoint].toString() }
@@ -179,11 +179,11 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
             courseGrid(AppDatabase.getCompulsoryCourses(stuID))
             h2 { +"已選課程" }
             courseGrid(AppDatabase.getPickedList(stuID).map {
-                transaction { AppDatabase.getCourse(it[PickedList.courseID])!! }
+                transaction { AppDatabase.getCourse(it[PickedList.cID])!! }
             })
             h2 { +"已選課表" }
             courseGridDateTable(AppDatabase.getPickedList(stuID).map {
-                transaction { AppDatabase.getCourse(it[PickedList.courseID])!! }
+                transaction { AppDatabase.getCourse(it[PickedList.cID])!! }
             })
         }
     }
@@ -214,7 +214,7 @@ fun HTML.courseDetail(sID: String, cID: Int) {
             }
             form(action = "/courses/$cID", method = FormMethod.post) {
                 if (
-                    AppDatabase.getPickedList(sID).filter { it[PickedList.courseID] == cID }
+                    AppDatabase.getPickedList(sID).filter { it[PickedList.cID] == cID }
                         .count() > 0
                 ) {
                     button(type = ButtonType.submit, classes = "btn btn-danger m-2") { +"退選" }

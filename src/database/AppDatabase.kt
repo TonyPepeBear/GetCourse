@@ -24,9 +24,9 @@ object AppDatabase {
         null
     }
 
-    fun getCourse(courseID: Int) = try {
+    fun getCourse(cID: Int) = try {
         transaction {
-            Courses.select { Courses.courseID eq courseID }.first()
+            Courses.select { Courses.cID eq cID }.first()
         }
     } catch (e: Exception) {
         println(e.message)
@@ -65,18 +65,18 @@ object AppDatabase {
     /**
      *  回傳已選此課人數
      */
-    fun getCourseStudentCount(courseID: Int) = transaction {
-        PickedList.select { PickedList.courseID eq courseID }.count().toInt()
+    fun getCourseStudentCount(cID: Int) = transaction {
+        PickedList.select { PickedList.cID eq cID }.count().toInt()
     }
 
     /**
      * 選課
      */
-    fun pickCourse(sID: String, cID: Int) {
+    fun pickCourse(sID: String, c: Int) {
         transaction {
             PickedList.insert {
                 it[stuID] = sID
-                it[courseID] = cID
+                it[cID] = c
             }
         }
     }
@@ -87,7 +87,7 @@ object AppDatabase {
     fun withdrawCourse(sID: String, cID: Int) {
         transaction {
             PickedList.deleteWhere {
-                (PickedList.stuID eq sID) and (PickedList.courseID eq cID)
+                (PickedList.stuID eq sID) and (PickedList.cID eq cID)
             }
         }
     }

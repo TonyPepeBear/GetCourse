@@ -102,14 +102,14 @@ fun Route.routeCourseList() {
         }
     }
 
-    post("/courses/{id}") {
-        val courseID = call.parameters["id"]?.toIntOrNull()
+    post("/courses/{cid}") {
+        val courseID = call.parameters["cid"]?.toIntOrNull()
         val stuID = call.sessions.get<LoginSession>()?.stuID
         if (courseID == null || stuID == null) {
             call.respondHtml { respond404() }
         } else {
             val course = AppDatabase.getPickedList(stuID)
-                .filter { it[PickedList.courseID] == courseID }
+                .filter { it[PickedList.cID] == courseID }
             if (course.count() > 0) {
                 AppDatabase.withdrawCourse(stuID, courseID)
             } else {
