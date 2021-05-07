@@ -60,7 +60,7 @@ fun FlowContent.courseGridDateTable(courses: List<ResultRow>) {
         }
     }
 
-    table(classes = "table table-bordered") {
+    table(classes = "table table-bordered align-middle text-center") {
         thead {
             tr {
                 th { style = "width: 9%"; +"#" }
@@ -74,9 +74,48 @@ fun FlowContent.courseGridDateTable(courses: List<ResultRow>) {
             }
         }
         tbody {
-            repeat(13) { r ->
+            repeat(14) { r ->
                 tr {
-                    td { +(r + 1).toString() }
+                    // course time
+                    td() {
+                        +when (r + 1) {
+                            1 -> "08:10"
+                            2 -> "09:10"
+                            3 -> "10:10"
+                            4 -> "11:10"
+                            5 -> "12:10"
+                            6 -> "13:10"
+                            7 -> "14:10"
+                            8 -> "15:10"
+                            9 -> "16:10"
+                            10 -> "17:10"
+                            11 -> "18:30"
+                            12 -> "19:25"
+                            13 -> "20:25"
+                            14 -> "21:20"
+                            else -> ""
+                        }
+                        br()
+                        +"|"
+                        br()
+                        +when (r + 1) {
+                            1 -> "09:00"
+                            2 -> "10:00"
+                            3 -> "11:00"
+                            4 -> "12:00"
+                            5 -> "13:00"
+                            6 -> "14:00"
+                            7 -> "15:00"
+                            8 -> "16:00"
+                            9 -> "17:00"
+                            10 -> "18:00"
+                            11 -> "19:20"
+                            12 -> "20:15"
+                            13 -> "21:15"
+                            14 -> "22:10"
+                            else -> ""
+                        }
+                    }
                     repeat(7) { c ->
                         val d =
                             coursesTime.filter { it[CourseTime.courseDate] == c + 1 && it[CourseTime.coursePeriod] == r + 1 }
@@ -221,7 +260,6 @@ fun HTML.courseDetail(sID: String, cID: Int) {
                 } else {
                     button(type = ButtonType.submit, classes = "btn btn-primary m-2") { +"加選" }
                 }
-
             }
         }
     }
