@@ -1,9 +1,6 @@
 package com.tonypepe
 
-import com.tonypepe.database.AppDatabase
-import com.tonypepe.database.Courses
-import com.tonypepe.database.PickedList
-import com.tonypepe.database.Students
+import com.tonypepe.database.*
 import kotlinx.html.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -19,7 +16,7 @@ fun HTML.bootstrapHead(title: String = "") {
 }
 
 /**
- * 課程表格
+ * 課程列表
  */
 @HtmlTagMarker
 fun FlowContent.courseGrid(courses: List<ResultRow>) {
@@ -47,7 +44,58 @@ fun FlowContent.courseGrid(courses: List<ResultRow>) {
                 }
             }
         }
+    }
+}
 
+/**
+ * 課表
+ */
+@HtmlTagMarker
+fun FlowContent.courseGridDateTable(courses: List<ResultRow>) {
+    val coursesTime = arrayListOf<ResultRow>().apply {
+        courses.forEach {
+            this.addAll(
+                AppDatabase.getCourseTime(it[Courses.courseID])
+            )
+        }
+    }
+
+    table(classes = "table table-bordered") {
+        thead {
+            tr {
+                th { style = "width: 9%"; +"#" }
+                th { style = "width: 13%"; +"一" }
+                th { style = "width: 13%"; +"二" }
+                th { style = "width: 13%"; +"三" }
+                th { style = "width: 13%"; +"四" }
+                th { style = "width: 13%"; +"五" }
+                th { style = "width: 13%"; +"六" }
+                th { style = "width: 13%"; +"日" }
+            }
+        }
+        tbody {
+            repeat(13) { r ->
+                tr {
+                    td { +(r + 1).toString() }
+                    repeat(7) { c ->
+                        val d =
+                            coursesTime.filter { it[CourseTime.courseDate] == c + 1 && it[CourseTime.coursePeriod] == r + 1 }
+                        if (d.count() > 0) {
+                            td {
+                                d.forEach { ct ->
+                                    val s =
+                                        courses.filter { it[Courses.courseID] == ct[CourseTime.courseID] }[0][Courses.courseName]
+                                    +s
+                                    br()
+                                }
+                            }
+                        } else {
+                            th { +"" }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -127,10 +175,14 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
                 urlButton("登出", "logout")
                 urlButton("課程列表", "/courses")
             }
-            h2 { +"必修課表" }
+            h2 { +"必修課程" }
             courseGrid(AppDatabase.getCompulsoryCourses(stuID))
-            h2 { +"已選課表" }
+            h2 { +"已選課程" }
             courseGrid(AppDatabase.getPickedList(stuID).map {
+                transaction { AppDatabase.getCourse(it[PickedList.courseID])!! }
+            })
+            h2 { +"已選課表" }
+            courseGridDateTable(AppDatabase.getPickedList(stuID).map {
                 transaction { AppDatabase.getCourse(it[PickedList.courseID])!! }
             })
         }

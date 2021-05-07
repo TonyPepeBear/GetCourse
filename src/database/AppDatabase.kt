@@ -92,6 +92,10 @@ object AppDatabase {
         }
     }
 
+    fun getCourseTime(cID: Int) = transaction {
+        CourseTime.select { CourseTime.courseID eq cID }.toList()
+    }
+
     fun insertCourse(
         id: Int,
         name: String,
