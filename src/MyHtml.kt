@@ -12,24 +12,31 @@ const val bootstrapCdn = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/
  */
 @HtmlTagMarker
 fun FlowContent.courseGrid(courses: List<ResultRow>) {
-    div(classes = "row") {
-        div(classes = "col-1 border p-1") { +"課程代號" }
-        div(classes = "col-2 border p-1") { +"課程名稱" }
-        div(classes = "col-1 border p-1") { +"課程學分" }
-        div(classes = "col-1 border p-1") { +"人數" }
-        div(classes = "col-1 border p-1") { +"授課教師" }
-    }
-    courses.forEach {
-        div(classes = "row") {
-            div(classes = "col-1 border") {
-                val courseID = it[Courses.courseID].toString()
-                a("/courses/$courseID") { +courseID }
+    table(classes = "table table-striped") {
+        thead {
+            tr {
+                th { +"課程代號" }
+                th { +"課程名稱" }
+                th { +"課程學分" }
+                th { +"人數" }
+                th { +"授課教師" }
             }
-            div(classes = "col-2 border") { +it[Courses.courseName] }
-            div(classes = "col-1 border") { +it[Courses.coursePoint].toString() }
-            div(classes = "col-1 border") { +"${AppDatabase.getCourseStudentCount(it[Courses.courseID])} / ${it[Courses.studentCount]}" }
-            div(classes = "col-1 border") { +it[Teachers.teacherName].toString() }
         }
+        tbody {
+            courses.forEach {
+                tr {
+                    td {
+                        val courseID = it[Courses.courseID].toString()
+                        a("/courses/$courseID") { +courseID }
+                    }
+                    td { +it[Courses.courseName] }
+                    td { +it[Courses.coursePoint].toString() }
+                    td { +"${AppDatabase.getCourseStudentCount(it[Courses.courseID])} / ${it[Courses.studentCount]}" }
+                    td { +it[Teachers.teacherName].toString() }
+                }
+            }
+        }
+
     }
 }
 
@@ -42,11 +49,24 @@ fun FlowContent.urlButton(title: String, url: String) {
 }
 
 fun FlowContent.navBar() {
-    nav(classes = "navbar fixed-top navbar-expand-lg navbar-light bg-light") {
+    nav(classes = "navbar sticky-top navbar-expand-lg navbar-light bg-light") {
         div(classes = "container-fluid") {
             a(classes = "navbar-brand", href = "/") { +"選課系統" }
         }
+        form(classes = "d-flex px-2", action = "/courses/search") {
+            input(type = InputType.search, classes = "form-control me-2") {
+                placeholder = "搜尋課程"
+            }
+            button(classes = "btn btn-outline-success", type = ButtonType.submit) { +"Search" }
+        }
     }
+
+    /*
+<form class="d-flex">
+      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+     */
 }
 
 fun HTML.respond404(message: String = "") {
