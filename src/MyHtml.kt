@@ -20,7 +20,7 @@ fun HTML.bootstrapHead(title: String = "") {
  */
 @HtmlTagMarker
 fun FlowContent.courseGrid(courses: List<ResultRow>) {
-    table(classes = "table table-striped") {
+    table(classes = "table table-hover") {
         thead {
             tr {
                 th { +"課程代號" }
