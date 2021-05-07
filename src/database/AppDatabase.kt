@@ -26,7 +26,7 @@ object AppDatabase {
 
     fun getCourse(courseID: Int) = try {
         transaction {
-            (Courses innerJoin Teachers).select { Courses.courseID eq courseID }.first()
+            Courses.select { Courses.courseID eq courseID }.first()
         }
     } catch (e: Exception) {
         println(e.message)
@@ -36,7 +36,7 @@ object AppDatabase {
     /**
      * 回傳所有課程
      */
-    fun getAllCourse() = transaction { (Courses innerJoin Teachers).selectAll().toList() }
+    fun getAllCourse() = transaction { Courses.selectAll().toList() }
 
     /**
      * 回傳一學生的必修課
@@ -44,14 +44,8 @@ object AppDatabase {
     fun getCompulsoryCourses(stuID: String) = try {
         transaction {
             val stu = getStudentByStuID(stuID) ?: throw IllegalArgumentException()
-            val dep = stu[Students.dep]
-            val grade = stu[Students.grade]
-            val cls = stu[Students.cls]
-            (Courses innerJoin Teachers).select {
-                (Courses.courseType eq 0) and
-                        (Courses.courseDep eq dep) and
-                        (Courses.courseGrade eq grade) and
-                        (Courses.courseClass eq cls)
+            Courses.select {
+                (Courses.courseType eq 'M') and (Courses.courseClass eq stu[Students.stuClass])
             }.toList()
         }
     } catch (e: Exception) {
@@ -94,6 +88,30 @@ object AppDatabase {
         transaction {
             PickedList.deleteWhere {
                 (PickedList.stuID eq sID) and (PickedList.courseID eq cID)
+            }
+        }
+    }
+
+    fun insertCourse(
+        id: Int,
+        name: String,
+        teacher: String,
+        type: Char,
+        point: Int,
+        count: Int,
+        cls: String,
+        dep: String
+    ) {
+        transaction {
+            Courses.insert {
+                it[courseID] = id
+                it[courseName] = name
+                it[teacherName] = teacher
+                it[courseType] = type
+                it[coursePoint] = point
+                it[studentCount] = count
+                it[courseClass] = cls
+                it[courseDep] = dep
             }
         }
     }

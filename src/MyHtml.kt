@@ -1,6 +1,9 @@
 package com.tonypepe
 
-import com.tonypepe.database.*
+import com.tonypepe.database.AppDatabase
+import com.tonypepe.database.Courses
+import com.tonypepe.database.PickedList
+import com.tonypepe.database.Students
 import kotlinx.html.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -40,7 +43,7 @@ fun FlowContent.courseGrid(courses: List<ResultRow>) {
                     td { +it[Courses.courseName] }
                     td { +it[Courses.coursePoint].toString() }
                     td { +"${AppDatabase.getCourseStudentCount(it[Courses.courseID])} / ${it[Courses.studentCount]}" }
-                    td { +it[Teachers.teacherName].toString() }
+                    td { +it[Courses.teacherName].toString() }
                 }
             }
         }
@@ -118,13 +121,7 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
         div(classes = "container") {
             h1 { +"HI  ${row[Students.stuName]}" }
             h3 {
-                +"${row[Students.stuID]}   ${
-                    toClassName(
-                        row[Students.dep],
-                        row[Students.grade],
-                        row[Students.cls]
-                    )
-                }"
+                row[Students.stuClass]
             }
             span {
                 urlButton("登出", "logout")

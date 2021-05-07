@@ -5,30 +5,28 @@ import org.jetbrains.exposed.sql.Table
 /*
 CREATE TABLE IF NOT EXISTS courses
 (
+    cID          INT AUTO_INCREMENT PRIMARY KEY,
     courseID     INT PRIMARY KEY,
     courseName   VARCHAR(20) NOT NULL,
-    teacherID    varchar(8)  NOT NULL,
-    courseType   INT         NOT NULL, # 0: 必修, 1: 選修, 2: 通識
+    teacherName  varchar(8)  NOT NULL,
+    courseType   CHAR        NOT NULL,
     coursePoint  INT         NOT NULL,
     studentCount INT         NOT NULL,
-    courseDep    varchar(20) NOT NULL,
-    courseGrade  INT         NOT NULL,
-    courseClass  INT         NOT NULL
-
-    FOREIGN KEY (teacherID) REFERENCES teachers(teacherID)
-);
+    courseClass  varchar(20) NOT NULL,
+    courseDep    varchar(20) NOT NULL
+);;
  */
 object Courses : Table("courses") {
-    val courseID = integer("courseID").autoIncrement()
+    val cID = integer("cID").autoIncrement()
+    val courseID = integer("courseID")
     val courseName = varchar("courseName", 20)
-    val teacherID = varchar("teacherID", 8) references Teachers.teacherID
-    val courseType = integer("courseType")
+    val teacherName = varchar("teacherName", 8)
+    val courseType = char("courseType")
     val coursePoint = integer("coursePoint")
     val studentCount = integer("studentCount")
+    val courseClass = varchar("courseClass", 20)
     val courseDep = varchar("courseDep", 20)
-    val courseGrade = integer("courseGrade")
-    val courseClass = integer("courseClass")
 
-    override val primaryKey = PrimaryKey(courseID)
+    override val primaryKey = PrimaryKey(cID)
 }
 
