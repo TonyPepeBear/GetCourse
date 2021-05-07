@@ -41,6 +41,14 @@ fun FlowContent.urlButton(title: String, url: String) {
     }
 }
 
+fun FlowContent.navBar() {
+    nav(classes = "navbar fixed-top navbar-expand-lg navbar-light bg-light") {
+        div(classes = "container-fluid") {
+            a(classes = "navbar-brand", href = "/") { +"選課系統" }
+        }
+    }
+}
+
 fun HTML.respond404(message: String = "") {
     head {
         title = "404"
@@ -64,6 +72,7 @@ fun HTML.notLoginHtml() {
         styleLink(bootstrapCdn)
     }
     body {
+        navBar()
         div(classes = "container") {
             h1 { +"選課系統" }
             form(classes = "form-inline", action = "/", method = FormMethod.post) {
@@ -93,6 +102,7 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
         styleLink(bootstrapCdn)
     }
     body {
+        navBar()
         div(classes = "container") {
             h1 { +"HI  ${row[Students.stuName]}" }
             h3 {
@@ -124,6 +134,7 @@ fun HTML.courseListHTML() {
         styleLink(bootstrapCdn)
     }
     body {
+        navBar()
         div(classes = "container") {
             h1 { +"課程列表" }
             urlButton("返回主頁面", "/")
@@ -142,6 +153,7 @@ fun HTML.courseDetail(sID: String, cID: Int) {
             styleLink(bootstrapCdn)
         }
         body {
+            navBar()
             div(classes = "container") {
                 h1 { +"${course[Courses.courseID]}  ${course[Courses.courseName]}" }
             }
