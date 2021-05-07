@@ -5,7 +5,7 @@ import kotlinx.html.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.transactions.transaction
 
-const val bootstrapCdn = "https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+const val bootstrapCdn = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
 
 /**
  * 課程表格
@@ -104,7 +104,7 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
                     )
                 }"
             }
-            div(classes = "row") {
+            span() {
                 urlButton("登出", "logout")
                 urlButton("課程列表", "/courses")
             }
@@ -146,12 +146,15 @@ fun HTML.courseDetail(sID: String, cID: Int) {
                 h1 { +"${course[Courses.courseID]}  ${course[Courses.courseName]}" }
             }
             form(action = "/courses/$cID", method = FormMethod.post) {
-                val text = if (
+                if (
                     AppDatabase.getPickedList(sID).filter { it[PickedList.courseID] == cID }
                         .count() > 0
-                )
-                    "退選" else "加選"
-                button(type = ButtonType.submit, classes = "btn btn-primary m-2") { +text }
+                ) {
+                    button(type = ButtonType.submit, classes = "btn btn-danger m-2") { +"退選" }
+                } else {
+                    button(type = ButtonType.submit, classes = "btn btn-primary m-2") { +"加選" }
+                }
+
             }
         }
     }
