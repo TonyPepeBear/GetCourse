@@ -5,7 +5,15 @@ import kotlinx.html.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.transactions.transaction
 
-const val bootstrapCdn = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
+const val bootstrapCssCdn = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
+const val bootstrapJsCdn = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+
+fun HTML.bootstrapHead(title: String = "") {
+    head {
+        meta("viewport", content = "width=device-width, initial-scale=1")
+        styleLink(bootstrapCssCdn)
+    }
+}
 
 /**
  * 課程表格
@@ -60,20 +68,10 @@ fun FlowContent.navBar() {
             button(classes = "btn btn-outline-success", type = ButtonType.submit) { +"Search" }
         }
     }
-
-    /*
-<form class="d-flex">
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success" type="submit">Search</button>
-    </form>
-     */
 }
 
 fun HTML.respond404(message: String = "") {
-    head {
-        title = "404"
-        styleLink(bootstrapCdn)
-    }
+    bootstrapHead("404")
     body {
         div(classes = "container") {
             h1 { +"404" }
@@ -87,10 +85,7 @@ fun HTML.respond404(message: String = "") {
  * 未登入的 HTML
  */
 fun HTML.notLoginHtml() {
-    head {
-        title = "Course"
-        styleLink(bootstrapCdn)
-    }
+    bootstrapHead("選課系統")
     body {
         navBar()
         div(classes = "container") {
@@ -117,10 +112,7 @@ fun HTML.notLoginHtml() {
  * 已登入的 HTML
  */
 fun HTML.loginHTML(stuID: String, row: ResultRow) {
-    head {
-        title = "Course"
-        styleLink(bootstrapCdn)
-    }
+    bootstrapHead("選課系統")
     body {
         navBar()
         div(classes = "container") {
@@ -134,7 +126,7 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
                     )
                 }"
             }
-            span() {
+            span {
                 urlButton("登出", "logout")
                 urlButton("課程列表", "/courses")
             }
@@ -149,10 +141,7 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
 }
 
 fun HTML.courseListHTML() {
-    head {
-        title = "課程列表"
-        styleLink(bootstrapCdn)
-    }
+    bootstrapHead("課程列表")
     body {
         navBar()
         div(classes = "container") {
@@ -168,10 +157,7 @@ fun HTML.courseDetail(sID: String, cID: Int) {
     if (course == null) {
         respond404("Course Not Found")
     } else {
-        head {
-            title = course[Courses.courseName]
-            styleLink(bootstrapCdn)
-        }
+        bootstrapHead(course[Courses.courseName])
         body {
             navBar()
             div(classes = "container") {
