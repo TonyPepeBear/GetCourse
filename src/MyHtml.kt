@@ -8,12 +8,17 @@ import org.jetbrains.exposed.sql.transactions.transaction
 const val bootstrapCssCdn = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
 const val bootstrapJsCdn = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
 
+@HtmlTagMarker
 fun HTML.bootstrapHead(title: String = "") {
     head {
+        this.title(title)
         meta("viewport", content = "width=device-width, initial-scale=1")
         styleLink(bootstrapCssCdn)
     }
 }
+
+@HtmlTagMarker
+fun FlowContent.divContainer(block: DIV.() -> Unit) = DIV(attributesMapOf("class", "container"), consumer).visit(block)
 
 /**
  * 課程列表
@@ -151,8 +156,8 @@ fun FlowContent.navBar() {
         div(classes = "container-fluid") {
             a(classes = "navbar-brand", href = "/") { +"選課系統" }
         }
-        form(classes = "d-flex px-2", action = "/courses/search") {
-            input(type = InputType.search, classes = "form-control me-2") {
+        form(classes = "d-flex px-2", action = "/search", method = FormMethod.post) {
+            input(type = InputType.search, classes = "form-control me-2", name = "s") {
                 placeholder = "搜尋課程"
             }
             button(classes = "btn btn-outline-success", type = ButtonType.submit) { +"Search" }
@@ -205,7 +210,7 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
     bootstrapHead("選課系統")
     body {
         navBar()
-        div(classes = "container") {
+        divContainer {
             h1 { +"HI  ${row[Students.stuName]}" }
             h3 {
                 row[Students.stuClass]
@@ -261,6 +266,17 @@ fun HTML.courseDetail(sID: String, cID: Int) {
                     button(type = ButtonType.submit, classes = "btn btn-primary m-2") { +"加選" }
                 }
             }
+        }
+    }
+}
+
+fun HTML.searchHTML(s: String, result: List<ResultRow>) {
+    bootstrapHead("搜尋")
+    body {
+        navBar()
+        divContainer {
+            h1 { +s }
+            courseGrid(result)
         }
     }
 }

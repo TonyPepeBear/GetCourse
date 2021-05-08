@@ -129,6 +129,22 @@ object AppDatabase {
             }
         }
     }
+
+    fun searchCourse(s: String) = try {
+        val ss = "%$s%"
+        transaction {
+            Courses.select {
+                (Courses.courseID eq (s.toIntOrNull() ?: 0)) or
+                        (Courses.courseName like ss) or
+                        (Courses.teacherName like ss) or
+                        (Courses.courseDep like ss) or
+                        (Courses.courseClass like ss)
+            }.toList()
+        }
+    } catch (e: Exception) {
+        println(e.message)
+        listOf()
+    }
 }
 
 fun toClassName(dep: String, grade: Int, cls: Int): String {

@@ -46,6 +46,7 @@ fun Application.module(testing: Boolean = false) {
     routing {
         routeRoot()
         routeCourseList()
+        routeSearchCourse()
     }
 }
 
@@ -117,5 +118,22 @@ fun Route.routeCourseList() {
             }
         }
         call.respondRedirect("/")
+    }
+}
+
+fun Route.routeSearchCourse() {
+    post("/search") {
+        val s = call.receiveParameters()["s"]
+        call.respondHtml {
+            if (s == null) {
+                respond404()
+            } else {
+                AppDatabase.searchCourse(s).also {
+                    if (it.count() > 0) {
+                        searchHTML(s, it)
+                    } else respond404("無搜尋結果")
+                }
+            }
+        }
     }
 }
