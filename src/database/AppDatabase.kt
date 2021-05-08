@@ -81,6 +81,13 @@ object AppDatabase {
         }
     }
 
+    fun pickAllCompulsoryCourses(sID: String) {
+        val compulsoryCourses = getCompulsoryCourses(sID)
+        compulsoryCourses.forEach {
+            pickCourse(sID, it[Courses.cID])
+        }
+    }
+
     /**
      * 退選
      */
@@ -94,6 +101,16 @@ object AppDatabase {
 
     fun getCourseTime(cID: Int) = transaction {
         CourseTime.select { CourseTime.courseID eq cID }.toList()
+    }
+
+    fun insertStudent(sID: String, sName: String, sCls: String) {
+        transaction {
+            Students.insert {
+                it[stuID] = sID
+                it[stuClass] = sCls
+                it[stuName] = sName
+            }
+        }
     }
 
     fun insertCourse(

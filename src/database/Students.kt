@@ -1,6 +1,7 @@
 package com.tonypepe.database
 
 import org.jetbrains.exposed.sql.Table
+import kotlin.random.Random
 
 /*
 CREATE TABLE IF NOT EXISTS students
@@ -17,4 +18,13 @@ object Students : Table("students") {
     val stuClass = varchar("class", 20)
 
     override val primaryKey = PrimaryKey(stuID)
+
+    fun createStudentID(): String {
+        val builder = StringBuilder()
+        builder.append("D08")
+        repeat(5) {
+            builder.append(Random.nextInt(0, 10))
+        }
+        return builder.toString()
+    }
 }

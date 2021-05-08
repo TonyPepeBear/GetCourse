@@ -1,6 +1,7 @@
 package com.tonypepe
 
 import com.fasterxml.jackson.databind.*
+import com.github.javafaker.Faker
 import com.tonypepe.database.AppDatabase
 import com.tonypepe.database.PickedList
 import com.tonypepe.database.Students
@@ -12,17 +13,21 @@ import io.ktor.features.*
 import io.ktor.gson.*
 import io.ktor.html.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.jackson.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.*
+import kotlinx.coroutines.*
 import kotlinx.html.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 const val LOGIN_SESSION = "LOGIN_SESSION"
+val faker = Faker(Locale.TAIWAN)
 
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
@@ -47,6 +52,7 @@ fun Application.module(testing: Boolean = false) {
         routeRoot()
         routeCourseList()
         routeSearchCourse()
+        routeAddStudent()
     }
 }
 
@@ -134,6 +140,44 @@ fun Route.routeSearchCourse() {
                     } else respond404("無搜尋結果")
                 }
             }
+        }
+    }
+}
+
+fun Route.routeAddStudent() {
+    get("/add-student") {
+        call.respondHtml {
+            addStudentHTML()
+        }
+    }
+
+    post("/add-student") {
+        val parameters = call.receiveParameters()
+
+        val cls = parameters["cls"]
+        val count = parameters["count"]?.toIntOrNull()
+        println("$cls\t$count")
+
+        if (cls == null || count == null) {
+            call.respondHtml { respond404() }
+        } else {
+            val allStudentID = AppDatabase.getAllStudentID()
+            val ids = mutableListOf<String>()
+            repeat(count) {
+                var studentID = Students.createStudentID()
+                while (allStudentID.contains(studentID) || ids.contains(studentID))
+                    studentID = Students.createStudentID()
+                ids.add(studentID)
+            }
+            val jobs = mutableListOf<Job>()
+            ids.forEach { stuID ->
+                jobs.add(GlobalScope.launch {
+                    AppDatabase.insertStudent(stuID, faker.name().fullName(), cls)
+                    AppDatabase.pickAllCompulsoryCourses(stuID)
+                })
+            }
+            jobs.forEach { it.join() }
+            call.respondRedirect("/")
         }
     }
 }

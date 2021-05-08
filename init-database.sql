@@ -5,18 +5,6 @@ CREATE TABLE IF NOT EXISTS students
     class varchar(20) NOT NULL
 );
 
-INSERT INTO students(stuID, name, class)
-VALUES ('D1234567', '王小明', '資訊一甲');
-
-INSERT INTO students(stuID, name, class)
-VALUES ('D2345678', '王大明', '資訊二丙');
-
-INSERT INTO students(stuID, name, class)
-VALUES ('D3456789', '王中明', '資訊三乙');
-
-INSERT INTO students(stuID, name, class)
-VALUES ('D4567890', '王巨明', '資訊一丙');
-
 
 
 CREATE TABLE IF NOT EXISTS courses
