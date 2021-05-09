@@ -5,6 +5,7 @@ import kotlinx.html.*
 fun HTML.addStudentHTML() {
     bootstrapHead("新增學生")
     body {
+        navBar()
         divContainer {
             h1 { +"新增學生" }
             form(action = "/add-student", method = FormMethod.post) {

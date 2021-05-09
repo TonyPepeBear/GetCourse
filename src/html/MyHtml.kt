@@ -157,6 +157,7 @@ fun FlowContent.urlButton(title: String, url: String) {
     }
 }
 
+@HtmlTagMarker
 fun FlowContent.navBar() {
     nav(classes = "navbar sticky-top navbar-expand-lg navbar-light bg-light") {
         div(classes = "container-fluid") {
