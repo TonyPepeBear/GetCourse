@@ -26,6 +26,7 @@ fun FlowContent.divContainer(block: DIV.() -> Unit) = DIV(attributesMapOf("class
  */
 @HtmlTagMarker
 fun FlowContent.courseGrid(courses: List<ResultRow>) {
+    val sortedCourses = courses.sortedBy { it[Courses.courseID] }
     table(classes = "table table-hover") {
         thead {
             tr {
@@ -37,7 +38,7 @@ fun FlowContent.courseGrid(courses: List<ResultRow>) {
             }
         }
         tbody {
-            courses.forEach {
+            sortedCourses.forEach {
                 tr {
                     td {
                         val cit = it[Courses.cID].toString()
@@ -182,5 +183,3 @@ fun HTML.respond404(message: String = "") {
         }
     }
 }
-
-
