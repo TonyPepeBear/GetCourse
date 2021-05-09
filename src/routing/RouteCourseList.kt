@@ -1,11 +1,11 @@
 package com.tonypepe.routing
 
 import com.tonypepe.LoginSession
-import com.tonypepe.courseDetail
-import com.tonypepe.courseListHTML
 import com.tonypepe.database.AppDatabase
 import com.tonypepe.database.PickedList
-import com.tonypepe.respond404
+import com.tonypepe.html.courseDetail
+import com.tonypepe.html.courseListHTML
+import com.tonypepe.html.respond404
 import io.ktor.application.*
 import io.ktor.html.*
 import io.ktor.response.*

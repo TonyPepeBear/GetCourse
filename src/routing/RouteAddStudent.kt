@@ -1,10 +1,10 @@
 package com.tonypepe.routing
 
 import com.github.javafaker.Faker
-import com.tonypepe.addStudentHTML
 import com.tonypepe.database.AppDatabase
 import com.tonypepe.database.Students
-import com.tonypepe.respond404
+import com.tonypepe.html.addStudentHTML
+import com.tonypepe.html.respond404
 import io.ktor.application.*
 import io.ktor.html.*
 import io.ktor.request.*

@@ -3,9 +3,9 @@ package com.tonypepe.routing
 import com.tonypepe.LoginSession
 import com.tonypepe.database.AppDatabase
 import com.tonypepe.database.Students
-import com.tonypepe.loginHTML
-import com.tonypepe.notLoginHtml
-import com.tonypepe.respond404
+import com.tonypepe.html.loginHTML
+import com.tonypepe.html.notLoginHtml
+import com.tonypepe.html.respond404
 import io.ktor.application.*
 import io.ktor.html.*
 import io.ktor.http.*

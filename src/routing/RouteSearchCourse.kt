@@ -1,8 +1,8 @@
 package com.tonypepe.routing
 
 import com.tonypepe.database.AppDatabase
-import com.tonypepe.respond404
-import com.tonypepe.searchHTML
+import com.tonypepe.html.respond404
+import com.tonypepe.html.searchHTML
 import io.ktor.application.*
 import io.ktor.html.*
 import io.ktor.request.*

@@ -1,9 +1,10 @@
-package com.tonypepe
+package com.tonypepe.html
 
-import com.tonypepe.database.*
+import com.tonypepe.database.AppDatabase
+import com.tonypepe.database.CourseTime
+import com.tonypepe.database.Courses
 import kotlinx.html.*
 import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.transactions.transaction
 
 const val bootstrapCssCdn = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
 const val bootstrapJsCdn = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
@@ -181,140 +182,4 @@ fun HTML.respond404(message: String = "") {
     }
 }
 
-/**
- * 未登入的 HTML
- */
-fun HTML.notLoginHtml() {
-    bootstrapHead("選課系統")
-    body {
-        navBar()
-        div(classes = "container") {
-            h1 { +"選課系統" }
-            form(classes = "form-inline", action = "/", method = FormMethod.post) {
-                input(classes = "m-2", type = InputType.text, name = Students.stuID.name) {
-                    placeholder = "學號"
-                }
-                button(type = ButtonType.submit, classes = "btn btn-primary m-2") { +"登入" }
-            }
-            ul {
-                AppDatabase.getAllStudentID().forEach {
-                    li {
-                        +it
-                    }
-                }
-            }
-            urlButton("課程列表", "/courses")
-            urlButton("新增學生", "/add-student")
-        }
-    }
-}
 
-/**
- * 已登入的 HTML
- */
-fun HTML.loginHTML(stuID: String, row: ResultRow) {
-    bootstrapHead("選課系統")
-    body {
-        navBar()
-        divContainer {
-            h1 { +"HI  ${row[Students.stuName]}" }
-            h3 {
-                row[Students.stuClass]
-            }
-            span {
-                urlButton("登出", "logout")
-                urlButton("課程列表", "/courses")
-            }
-            h2 { +"必修課程" }
-            courseGrid(AppDatabase.getCompulsoryCourses(stuID))
-            h2 { +"已選課程" }
-            courseGrid(AppDatabase.getPickedList(stuID).map {
-                transaction { AppDatabase.getCourse(it[PickedList.cID])!! }
-            })
-            h2 { +"已選課表" }
-            courseGridDateTable(AppDatabase.getPickedList(stuID).map {
-                transaction { AppDatabase.getCourse(it[PickedList.cID])!! }
-            })
-        }
-    }
-}
-
-fun HTML.courseListHTML() {
-    bootstrapHead("課程列表")
-    body {
-        navBar()
-        div(classes = "container") {
-            h1 { +"課程列表" }
-            urlButton("返回主頁面", "/")
-            courseGrid(AppDatabase.getAllCourse())
-        }
-    }
-}
-
-fun HTML.courseDetail(sID: String, cID: Int) {
-    val course = AppDatabase.getCourse(cID)
-    if (course == null) {
-        respond404("Course Not Found")
-    } else {
-        bootstrapHead(course[Courses.courseName])
-        body {
-            navBar()
-            div(classes = "container") {
-                h1 { +"${course[Courses.courseID]}  ${course[Courses.courseName]}" }
-            }
-            form(action = "/courses/$cID", method = FormMethod.post) {
-                if (
-                    AppDatabase.getPickedList(sID).filter { it[PickedList.cID] == cID }
-                        .count() > 0
-                ) {
-                    button(type = ButtonType.submit, classes = "btn btn-danger m-2") { +"退選" }
-                } else {
-                    button(type = ButtonType.submit, classes = "btn btn-primary m-2") { +"加選" }
-                }
-            }
-        }
-    }
-}
-
-fun HTML.searchHTML(s: String, result: List<ResultRow>) {
-    bootstrapHead("搜尋")
-    body {
-        navBar()
-        divContainer {
-            h1 { +"搜尋結果：$s" }
-            courseGrid(result)
-        }
-    }
-}
-
-fun HTML.addStudentHTML() {
-    bootstrapHead("新增學生")
-    body {
-        divContainer {
-            h1 { +"新增學生" }
-            form(action = "/add-student", method = FormMethod.post) {
-                div(classes = "form-group") {
-                    label {
-                        attributes["for"] = "cls"
-                        +"班級"
-                    }
-                    input(classes = "form-control", type = InputType.text, name = "cls") {
-                        id = "cls"
-                        placeholder = "班級"
-                    }
-                }
-                div(classes = "form-group") {
-                    label {
-                        attributes["for"] = "count"
-                        +"數量"
-                    }
-                    input(classes = "form-control", type = InputType.text, name = "count") {
-                        id = "count"
-                        placeholder = "數量"
-                    }
-                }
-                button(type = ButtonType.submit, classes = "btn btn-primary") { +"新增" }
-            }
-        }
-    }
-}
