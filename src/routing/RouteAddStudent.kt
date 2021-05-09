@@ -1,9 +1,9 @@
 package com.tonypepe.routing
 
+import com.github.javafaker.Faker
 import com.tonypepe.addStudentHTML
 import com.tonypepe.database.AppDatabase
 import com.tonypepe.database.Students
-import com.tonypepe.faker
 import com.tonypepe.respond404
 import io.ktor.application.*
 import io.ktor.html.*
@@ -14,6 +14,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+val faker = Faker()
 fun Route.routeAddStudent() {
     get("/add-student") {
         call.respondHtml {
