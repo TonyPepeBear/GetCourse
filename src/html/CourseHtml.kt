@@ -66,7 +66,7 @@ fun FlowContent.withdrawModal() {
                     h5(classes = "modal-title") { +"確定退選？" }
                 }
                 div(classes = "modal-body") {
-                    p { +"此課程為必選課" }
+                    p { +"此課程為必修課" }
                 }
                 form(classes = "modal-footer", method = FormMethod.post) {
                     button(classes = "btn btn-secondary") {
