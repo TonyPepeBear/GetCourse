@@ -24,6 +24,7 @@ fun HTML.courseDetail(sID: String, cID: Int) {
     } else {
         bootstrapHead(course[Courses.courseName])
         body {
+            withdrawModal()
             navBar()
             div(classes = "container") {
                 h1 { +"${course[Courses.courseID]}  ${course[Courses.courseName]}" }
@@ -33,9 +34,48 @@ fun HTML.courseDetail(sID: String, cID: Int) {
                     AppDatabase.getPickedList(sID).filter { it[PickedList.cID] == cID }
                         .count() > 0
                 ) {
-                    button(type = ButtonType.submit, classes = "btn btn-danger m-2") { +"退選" }
+                    if (course[Courses.courseType] == 'M') {
+                        button(type = ButtonType.button, classes = "btn btn-danger m-2") {
+                            attributes["data-bs-toggle"] = "modal"
+                            attributes["data-bs-target"] = "#withdraw-modal"
+                            +"退選"
+                        }
+                    } else {
+                        button(type = ButtonType.submit, classes = "btn btn-danger m-2") {
+                            +"退選"
+                        }
+                    }
                 } else {
-                    button(type = ButtonType.submit, classes = "btn btn-primary m-2") { +"加選" }
+                    button(type = ButtonType.submit, classes = "btn btn-primary m-2") {
+                        +"加選"
+                    }
+                }
+            }
+            script(src = bootstrapJsCdn) {}
+        }
+    }
+}
+
+@HtmlTagMarker
+fun FlowContent.withdrawModal() {
+    div(classes = "modal fade") {
+        id = "withdraw-modal"
+        div(classes = "modal-dialog") {
+            div(classes = "modal-content") {
+                div(classes = "modal-header") {
+                    h5(classes = "modal-title") { +"確定退選？" }
+                }
+                div(classes = "modal-body") {
+                    p { +"此課程為必選課" }
+                }
+                form(classes = "modal-footer", method = FormMethod.post) {
+                    button(classes = "btn btn-secondary") {
+                        attributes["data-bs-dismiss"] = "modal"
+                        +"取消"
+                    }
+                    button(classes = "btn btn-danger") {
+                        +"退選"
+                    }
                 }
             }
         }
