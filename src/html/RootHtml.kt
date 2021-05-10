@@ -45,7 +45,7 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
         divContainer {
             h1 { +"HI  ${row[Students.stuName]}" }
             h3 {
-                row[Students.stuClass]
+                +row[Students.stuClass]
             }
             span {
                 urlButton("登出", "logout")
