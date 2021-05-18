@@ -1,6 +1,7 @@
 package com.tonypepe.html
 
 import com.tonypepe.database.AppDatabase
+import com.tonypepe.database.CourseTime
 import com.tonypepe.database.Courses
 import com.tonypepe.database.PickedList
 import kotlinx.html.*
@@ -27,7 +28,7 @@ fun HTML.courseDetail(sID: String, cID: Int) {
             withdrawModal()
             navBar()
             val stuCount = AppDatabase.getCourseStudentCount(cID)
-            val cTime = AppDatabase.getCourseTime(cID)
+            val cTime = AppDatabase.getCourseTime(course[Courses.courseID])
 
             val conflict = AppDatabase.isCourseConflict(sID, course[Courses.courseID])
 
@@ -36,6 +37,14 @@ fun HTML.courseDetail(sID: String, cID: Int) {
                 h3 { +"老師：${course[Courses.teacherName]}" }
                 h3 { +"課程班級：${course[Courses.courseClass]}" }
                 h3 { +"課程人數：$stuCount / ${course[Courses.studentCount]}" }
+                h3 { +"學分：${course[Courses.coursePoint]}" }
+                h3 { +"課程時間：" }
+                ol {
+                    cTime.forEach {
+                        val time = "星期 ${it[CourseTime.courseDate]} 第 ${it[CourseTime.coursePeriod]} 節"
+                        li { +time }
+                    }
+                }
 
                 form(action = "/courses/$cID", method = FormMethod.post) {
                     if (
