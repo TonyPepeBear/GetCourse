@@ -88,6 +88,22 @@ object AppDatabase {
         }
     }
 
+    fun isCourseConflict(sID: String, courseID: Int): Boolean {
+        val ct = getCourseTime(courseID)
+        val pickedList = getPickedList(sID)
+
+        pickedList.forEach { p ->
+            getCourseTime(getCourse(p[PickedList.cID])!![Courses.courseID]).forEach { i ->
+                ct.forEach { j ->
+                    if (i[CourseTime.courseDate] == j[CourseTime.courseDate] && i[CourseTime.coursePeriod] == j[CourseTime.coursePeriod]) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
     /**
      * 退選
      */
@@ -99,8 +115,8 @@ object AppDatabase {
         }
     }
 
-    fun getCourseTime(cID: Int) = transaction {
-        CourseTime.select { CourseTime.courseID eq cID }.toList()
+    fun getCourseTime(courseID: Int) = transaction {
+        CourseTime.select { CourseTime.courseID eq courseID }.toList()
     }
 
     fun insertStudent(sID: String, sName: String, sCls: String) {

@@ -26,28 +26,46 @@ fun HTML.courseDetail(sID: String, cID: Int) {
         body {
             withdrawModal()
             navBar()
+            val stuCount = AppDatabase.getCourseStudentCount(cID)
+            val cTime = AppDatabase.getCourseTime(cID)
+
+            val conflict = AppDatabase.isCourseConflict(sID, course[Courses.courseID])
+
             div(classes = "container") {
                 h1 { +"${course[Courses.courseID]}  ${course[Courses.courseName]}" }
-            }
-            form(action = "/courses/$cID", method = FormMethod.post) {
-                if (
-                    AppDatabase.getPickedList(sID).filter { it[PickedList.cID] == cID }
-                        .count() > 0
-                ) {
-                    if (course[Courses.courseType] == 'M') {
-                        button(type = ButtonType.button, classes = "btn btn-danger m-2") {
-                            attributes["data-bs-toggle"] = "modal"
-                            attributes["data-bs-target"] = "#withdraw-modal"
-                            +"退選"
+                h3 { +"老師：${course[Courses.teacherName]}" }
+                h3 { +"課程班級：${course[Courses.courseClass]}" }
+                h3 { +"課程人數：$stuCount / ${course[Courses.studentCount]}" }
+
+                form(action = "/courses/$cID", method = FormMethod.post) {
+                    if (
+                        AppDatabase.getPickedList(sID).filter { it[PickedList.cID] == cID }
+                            .count() > 0
+                    ) {
+                        if (course[Courses.courseType] == 'M') {
+                            button(type = ButtonType.button, classes = "btn btn-danger m-2") {
+                                attributes["data-bs-toggle"] = "modal"
+                                attributes["data-bs-target"] = "#withdraw-modal"
+                                +"退選"
+                            }
+                        } else {
+                            button(type = ButtonType.submit, classes = "btn btn-danger m-2") {
+                                +"退選"
+                            }
                         }
                     } else {
-                        button(type = ButtonType.submit, classes = "btn btn-danger m-2") {
-                            +"退選"
+                        if (stuCount >= course[Courses.studentCount]) {
+                            h3(classes = "text-danger") { +"人數已滿無法加選" }
                         }
-                    }
-                } else {
-                    button(type = ButtonType.submit, classes = "btn btn-primary m-2") {
-                        +"加選"
+                        if (conflict) {
+                            h3(classes = "text-danger") { +"課程時間衝突無法加選" }
+                        }
+                        button(type = ButtonType.submit, classes = "btn btn-primary m-2") {
+                            if (stuCount >= course[Courses.studentCount] || conflict) {
+                                attributes["disabled"] = ""
+                            }
+                            +"加選"
+                        }
                     }
                 }
             }
