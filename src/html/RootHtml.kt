@@ -61,12 +61,18 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
                 urlButton("登出", "logout")
                 urlButton("課程列表", "/courses")
             }
-            h2 { +"必修課程" }
-            courseGrid(AppDatabase.getCompulsoryCourses(stuID))
-            h2 { +"已選課程" }
-            courseGrid(pickedList.map {
-                transaction { AppDatabase.getCourse(it[PickedList.cID])!! }
-            })
+            div(classes = "row") {
+                div(classes = "col-lg-6") {
+                    h2 { +"必修課程" }
+                    courseGrid(AppDatabase.getCompulsoryCourses(stuID))
+                }
+                div(classes = "col-lg-6") {
+                    h2 { +"已選課程" }
+                    courseGrid(pickedList.map {
+                        transaction { AppDatabase.getCourse(it[PickedList.cID])!! }
+                    })
+                }
+            }
             h2 { +"已選課表" }
             courseGridDateTable(pickedList.map {
                 transaction { AppDatabase.getCourse(it[PickedList.cID])!! }
