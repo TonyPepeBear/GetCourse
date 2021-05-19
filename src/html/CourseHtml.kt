@@ -49,7 +49,13 @@ fun HTML.courseDetail(sID: String, cID: Int) {
                 }
                 val cTime = cTimeAsync.await()
                 val timeConflict = timeConflictAsync.await()
-
+                val overPoint = run {
+                    var p = course[Courses.coursePoint]
+                    pickedList.forEach {
+                        p += it[Courses.coursePoint]
+                    }
+                    p > 30
+                }
                 div(classes = "container") {
                     h1 { +"${course[Courses.courseID]}  ${course[Courses.courseName]}" }
                     h3 { +"老師：${course[Courses.teacherName]}" }
@@ -89,8 +95,11 @@ fun HTML.courseDetail(sID: String, cID: Int) {
                             if (courseNameConflict) {
                                 h3(classes = "text-danger") { +"無法加選重複的課程" }
                             }
+                            if (overPoint) {
+                                h3(classes = "text-danger") { +"超出學分限制 (30) 無法加選" }
+                            }
                             button(type = ButtonType.submit, classes = "btn btn-primary m-2") {
-                                if (stuCount >= course[Courses.studentCount] || timeConflict || courseNameConflict) {
+                                if (stuCount >= course[Courses.studentCount] || timeConflict || courseNameConflict || overPoint) {
                                     attributes["disabled"] = ""
                                 }
                                 +"加選"
