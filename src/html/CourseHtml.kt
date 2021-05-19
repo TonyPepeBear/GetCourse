@@ -56,6 +56,14 @@ fun HTML.courseDetail(sID: String, cID: Int) {
                     }
                     p > 30
                 }
+                val lowPoint = run {
+                    var p = -course[Courses.coursePoint]
+                    pickedList.forEach {
+                        p += it[Courses.coursePoint]
+                    }
+                    println("----------$p")
+                    p < 9
+                }
                 div(classes = "container") {
                     h1 { +"${course[Courses.courseID]}  ${course[Courses.courseName]}" }
                     h3 { +"老師：${course[Courses.teacherName]}" }
@@ -74,14 +82,23 @@ fun HTML.courseDetail(sID: String, cID: Int) {
                             AppDatabase.getPickedList(sID).filter { it[PickedList.cID] == cID }
                                 .count() > 0
                         ) {
+                            if (lowPoint) {
+                                h3(classes = "text-danger") { +"低於最低學分限制 (9) 無法退選" }
+                            }
                             if (course[Courses.courseType] == 'M') {
                                 button(type = ButtonType.button, classes = "btn btn-danger m-2") {
                                     attributes["data-bs-toggle"] = "modal"
                                     attributes["data-bs-target"] = "#withdraw-modal"
+                                    if (lowPoint) {
+                                        attributes["disabled"] = ""
+                                    }
                                     +"退選"
                                 }
                             } else {
                                 button(type = ButtonType.submit, classes = "btn btn-danger m-2") {
+                                    if (lowPoint) {
+                                        attributes["disabled"] = ""
+                                    }
                                     +"退選"
                                 }
                             }
