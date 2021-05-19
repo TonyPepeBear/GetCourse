@@ -39,6 +39,14 @@ fun HTML.courseDetail(sID: String, cID: Int) {
                 val pickedList = pickedListAsync.await()
                 val timeConflictAsync =
                     async { AppDatabase.isCourseConflict(sID, course[Courses.courseID], pickedList) }
+                val courseNameConflict = run {
+                    pickedList.forEach {
+                        if (it[Courses.courseName] == course[Courses.courseName]) {
+                            return@run true
+                        }
+                    }
+                    false
+                }
                 val cTime = cTimeAsync.await()
                 val timeConflict = timeConflictAsync.await()
 
@@ -78,8 +86,11 @@ fun HTML.courseDetail(sID: String, cID: Int) {
                             if (timeConflict) {
                                 h3(classes = "text-danger") { +"課程時間衝突無法加選" }
                             }
+                            if (courseNameConflict) {
+                                h3(classes = "text-danger") { +"無法加選重複的課程" }
+                            }
                             button(type = ButtonType.submit, classes = "btn btn-primary m-2") {
-                                if (stuCount >= course[Courses.studentCount] || timeConflict) {
+                                if (stuCount >= course[Courses.studentCount] || timeConflict || courseNameConflict) {
                                     attributes["disabled"] = ""
                                 }
                                 +"加選"

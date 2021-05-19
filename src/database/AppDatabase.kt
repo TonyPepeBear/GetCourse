@@ -53,9 +53,13 @@ object AppDatabase {
         listOf()
     }
 
+    /**
+     * Return picked course list with inner join detail
+     */
     fun getPickedList(stuId: String): List<ResultRow> = try {
         transaction {
-            PickedList.select { PickedList.stuID eq stuId }.toList()
+            PickedList.innerJoin(Courses, { cID }, { cID })
+                .select { PickedList.stuID eq stuId }.toList()
         }
     } catch (e: Exception) {
         println(e.message)
