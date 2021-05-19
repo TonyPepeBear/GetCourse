@@ -4,6 +4,8 @@ import com.tonypepe.database.AppDatabase
 import com.tonypepe.database.CourseTime
 import com.tonypepe.database.Courses
 import com.tonypepe.database.PickedList
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
 
 fun HTML.courseListHTML() {
@@ -25,55 +27,63 @@ fun HTML.courseDetail(sID: String, cID: Int) {
     } else {
         bootstrapHead(course[Courses.courseName])
         body {
+
             withdrawModal()
             navBar()
+
             val stuCount = AppDatabase.getCourseStudentCount(cID)
-            val cTime = AppDatabase.getCourseTime(course[Courses.courseID])
 
-            val conflict = AppDatabase.isCourseConflict(sID, course[Courses.courseID])
+            runBlocking {
+                val cTimeAsync = async { AppDatabase.getCourseTime(course[Courses.courseID]) }
+                val pickedListAsync = async { AppDatabase.getPickedList(sID) }
+                val pickedList = pickedListAsync.await()
+                val timeConflictAsync =
+                    async { AppDatabase.isCourseConflict(sID, course[Courses.courseID], pickedList) }
+                val cTime = cTimeAsync.await()
+                val timeConflict = timeConflictAsync.await()
 
-            div(classes = "container") {
-                h1 { +"${course[Courses.courseID]}  ${course[Courses.courseName]}" }
-                h3 { +"老師：${course[Courses.teacherName]}" }
-                h3 { +"課程班級：${course[Courses.courseClass]}" }
-                h3 { +"課程人數：$stuCount / ${course[Courses.studentCount]}" }
-                h3 { +"學分：${course[Courses.coursePoint]}" }
-                h3 { +"課程時間：" }
-                ol {
-                    cTime.forEach {
-                        val time = "星期 ${it[CourseTime.courseDate]} 第 ${it[CourseTime.coursePeriod]} 節"
-                        li { +time }
+                div(classes = "container") {
+                    h1 { +"${course[Courses.courseID]}  ${course[Courses.courseName]}" }
+                    h3 { +"老師：${course[Courses.teacherName]}" }
+                    h3 { +"課程班級：${course[Courses.courseClass]}" }
+                    h3 { +"課程人數：${stuCount} / ${course[Courses.studentCount]}" }
+                    h3 { +"學分：${course[Courses.coursePoint]}" }
+                    h3 { +"課程時間：" }
+                    ol {
+                        cTime.forEach {
+                            val time = "星期 ${it[CourseTime.courseDate]} 第 ${it[CourseTime.coursePeriod]} 節"
+                            li { +time }
+                        }
                     }
-                }
-
-                form(action = "/courses/$cID", method = FormMethod.post) {
-                    if (
-                        AppDatabase.getPickedList(sID).filter { it[PickedList.cID] == cID }
-                            .count() > 0
-                    ) {
-                        if (course[Courses.courseType] == 'M') {
-                            button(type = ButtonType.button, classes = "btn btn-danger m-2") {
-                                attributes["data-bs-toggle"] = "modal"
-                                attributes["data-bs-target"] = "#withdraw-modal"
-                                +"退選"
+                    form(action = "/courses/$cID", method = FormMethod.post) {
+                        if (
+                            AppDatabase.getPickedList(sID).filter { it[PickedList.cID] == cID }
+                                .count() > 0
+                        ) {
+                            if (course[Courses.courseType] == 'M') {
+                                button(type = ButtonType.button, classes = "btn btn-danger m-2") {
+                                    attributes["data-bs-toggle"] = "modal"
+                                    attributes["data-bs-target"] = "#withdraw-modal"
+                                    +"退選"
+                                }
+                            } else {
+                                button(type = ButtonType.submit, classes = "btn btn-danger m-2") {
+                                    +"退選"
+                                }
                             }
                         } else {
-                            button(type = ButtonType.submit, classes = "btn btn-danger m-2") {
-                                +"退選"
+                            if (stuCount >= course[Courses.studentCount]) {
+                                h3(classes = "text-danger") { +"人數已滿無法加選" }
                             }
-                        }
-                    } else {
-                        if (stuCount >= course[Courses.studentCount]) {
-                            h3(classes = "text-danger") { +"人數已滿無法加選" }
-                        }
-                        if (conflict) {
-                            h3(classes = "text-danger") { +"課程時間衝突無法加選" }
-                        }
-                        button(type = ButtonType.submit, classes = "btn btn-primary m-2") {
-                            if (stuCount >= course[Courses.studentCount] || conflict) {
-                                attributes["disabled"] = ""
+                            if (timeConflict) {
+                                h3(classes = "text-danger") { +"課程時間衝突無法加選" }
                             }
-                            +"加選"
+                            button(type = ButtonType.submit, classes = "btn btn-primary m-2") {
+                                if (stuCount >= course[Courses.studentCount] || timeConflict) {
+                                    attributes["disabled"] = ""
+                                }
+                                +"加選"
+                            }
                         }
                     }
                 }

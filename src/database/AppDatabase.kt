@@ -88,9 +88,8 @@ object AppDatabase {
         }
     }
 
-    fun isCourseConflict(sID: String, courseID: Int): Boolean {
+    fun isCourseConflict(sID: String, courseID: Int, pickedList: List<ResultRow> = getPickedList(sID)): Boolean {
         val ct = getCourseTime(courseID)
-        val pickedList = getPickedList(sID)
 
         pickedList.forEach { p ->
             getCourseTime(getCourse(p[PickedList.cID])!![Courses.courseID]).forEach { i ->
