@@ -1,14 +1,13 @@
 package com.tonypepe.database
 
-import com.tonypepe.MYSQL_PW
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object AppDatabase {
-    fun initDatabase(testing: Boolean = false) {
+    fun initDatabase(testing: Boolean = false, password: String = System.getenv("mysql_pw")) {
         Database.connect(
             url = "jdbc:mysql://localhost:3306/test_db",
-            user = "root", password = MYSQL_PW
+            user = "root", password = password
         )
     }
 
