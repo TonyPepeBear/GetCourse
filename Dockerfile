@@ -1,6 +1,10 @@
-FROM openjdk:15
+FROM openjdk:15 as builder
 
 COPY . /project
 WORKDIR /project
 RUN ./gradlew installDist
-CMD ["/project/build/install/GetCourse/bin/GetCourse"]
+
+FROM openjdk
+
+COPY --from=builder /project/build/install/GetCourse /project
+CMD ["/project/bin/GetCourse"]
