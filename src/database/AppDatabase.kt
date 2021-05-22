@@ -4,10 +4,15 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object AppDatabase {
-    fun initDatabase(testing: Boolean = false, password: String = System.getenv("mysql_pw")) {
+    fun initDatabase(
+        testing: Boolean = false,
+        mysqlPW: String = System.getenv("mysql_pw"),
+        mysqlURL: String = System.getenv("mysql_url"),
+        mysqlDB: String = System.getenv("mysql_db")
+    ) {
         Database.connect(
-            url = "jdbc:mysql://localhost:3306/test_db",
-            user = "root", password = password
+            url = "jdbc:mysql://$mysqlURL:3306/$mysqlDB",
+            user = "root", password = mysqlPW
         )
     }
 
