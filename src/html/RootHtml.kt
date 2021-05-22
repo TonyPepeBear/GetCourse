@@ -68,10 +68,12 @@ fun HTML.loginHTML(stuID: String, row: ResultRow) {
                 }
                 div(classes = "col-lg-6") {
                     h2 { +"已選課程" }
-                    courseGrid(pickedList.map {
-                        transaction { AppDatabase.getCourse(it[PickedList.cID])!! }
-                    })
+                    courseGrid(pickedList)
                 }
+            }
+            divContainer {
+                h2 { +"觀察列表" }
+                courseGrid(AppDatabase.getWatchedList(stuID))
             }
             h2 { +"已選課表" }
             courseGridDateTable(pickedList.map {

@@ -3,6 +3,7 @@ package com.tonypepe.routing
 import com.tonypepe.LoginSession
 import com.tonypepe.database.AppDatabase
 import com.tonypepe.database.PickedList
+import com.tonypepe.database.WatchList
 import com.tonypepe.html.courseDetail
 import com.tonypepe.html.courseListHTML
 import com.tonypepe.html.respond404
@@ -43,6 +44,23 @@ fun Route.routeCourseList() {
                 AppDatabase.withdrawCourse(stuID, courseID)
             } else {
                 AppDatabase.pickCourse(stuID, courseID)
+            }
+        }
+        call.respondRedirect("/")
+    }
+
+    post("/watch/{cid}") {
+        val cid = call.parameters["cid"]?.toIntOrNull()
+        val stuID = call.sessions.get<LoginSession>()?.stuID
+        if (cid == null || stuID == null) {
+            call.respondHtml { respond404() }
+        } else {
+            val course = AppDatabase.getWatchedList(stuID)
+                .filter { it[WatchList.courseID] == cid }
+            if (course.count() > 0) {
+                AppDatabase.withdrawCourse(stuID, cid)
+            } else {
+                AppDatabase.watchCourse(stuID, cid)
             }
         }
         call.respondRedirect("/")

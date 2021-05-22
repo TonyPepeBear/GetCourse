@@ -1,9 +1,6 @@
 package com.tonypepe.html
 
-import com.tonypepe.database.AppDatabase
-import com.tonypepe.database.CourseTime
-import com.tonypepe.database.Courses
-import com.tonypepe.database.PickedList
+import com.tonypepe.database.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.html.*
@@ -75,6 +72,20 @@ fun HTML.courseDetail(sID: String, cID: Int) {
                         cTime.forEach {
                             val time = "星期 ${it[CourseTime.courseDate]} 第 ${it[CourseTime.coursePeriod]} 節"
                             li { +time }
+                        }
+                    }
+                    form(action = "/watch/$cID", method = FormMethod.post) {
+                        val watched = AppDatabase.getWatchedList(sID)
+                            .filter { it[WatchList.courseID] == cID }
+                            .count() > 0
+                        if (watched) {
+                            button(type = ButtonType.submit, classes = "btn btn-danger m-2") {
+                                +"移出觀察列表"
+                            }
+                        } else {
+                            button(type = ButtonType.submit, classes = "btn btn-primary m-2") {
+                                +"加入觀察列表"
+                            }
                         }
                     }
                     form(action = "/courses/$cID", method = FormMethod.post) {

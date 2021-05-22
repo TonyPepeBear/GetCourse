@@ -70,6 +70,16 @@ object AppDatabase {
         listOf()
     }
 
+    fun getWatchedList(stuId: String): List<ResultRow> = try {
+        transaction {
+            WatchList.innerJoin(Courses, { courseID }, { cID })
+                .select { WatchList.stuID eq stuId }.toList()
+        }
+    } catch (e: Exception) {
+        println(e.message)
+        listOf()
+    }
+
     /**
      *  回傳已選此課人數
      */
@@ -117,6 +127,14 @@ object AppDatabase {
     fun withdrawCourse(sID: String, cID: Int) {
         transaction {
             PickedList.deleteWhere {
+                (PickedList.stuID eq sID) and (PickedList.cID eq cID)
+            }
+        }
+    }
+
+    fun withdrawWatchedCourse(sID: String, cID: Int) {
+        transaction {
+            WatchList.deleteWhere {
                 (PickedList.stuID eq sID) and (PickedList.cID eq cID)
             }
         }
@@ -184,5 +202,14 @@ object AppDatabase {
     } catch (e: Exception) {
         println(e.message)
         listOf()
+    }
+
+    fun watchCourse(sid: String, cid: Int) {
+        transaction {
+            WatchList.insert {
+                it[stuID] = sid
+                it[courseID] = cid
+            }
+        }
     }
 }

@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS watchList
 object WatchList : Table("watchList") {
     val watchID = integer("watchID").autoIncrement()
     val stuID = varchar("stuID", 8) references Students.stuID
-    val cID = integer("cID") references Courses.courseID
+    val courseID = integer("cID") references Courses.courseID
 
     override val primaryKey = PrimaryKey(watchID)
 }
