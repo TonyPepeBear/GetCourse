@@ -186,21 +186,3 @@ object AppDatabase {
         listOf()
     }
 }
-
-fun toClassName(dep: String, grade: Int, cls: Int): String {
-    val g = when (grade) {
-        1 -> "ㄧ"
-        2 -> "二"
-        3 -> "三"
-        4 -> "四"
-        else -> ""
-    }
-    val c = when (cls) {
-        1 -> "甲"
-        2 -> "乙"
-        3 -> "丙"
-        4 -> "丁"
-        else -> ""
-    }
-    return "$dep$g$c"
-}
